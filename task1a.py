@@ -59,7 +59,7 @@ train_dataLoader = DataLoader(Subset(training_data, range(500)), batch_size=64, 
 valid_dataLoader = DataLoader(valid_data, batch_size=64)
 test_dataLoader = DataLoader(test_data, batch_size=64)
 
-model = NeuralNetwork()
+model = NeuralNetwork().to(device=device)
 
 loss_fn = nn.CrossEntropyLoss()
 
@@ -75,6 +75,7 @@ for epoch in range(epoch_number):
     train_loss, valid_loss, train_correct = 0, 0, 0
     model.train()
     for images, labels in train_dataLoader:
+        images, labels = images.to(device), labels.to(device)
         pred = model(images)
 
         # Computes cost fn (using CrossEntropyLoss on labels and predictions)
@@ -93,6 +94,7 @@ for epoch in range(epoch_number):
     with torch.no_grad():
         model.eval()
         for images, labels in valid_dataLoader:
+            images, labels = images.to(device), labels.to(device)
             val = model(images)
             valid_loss += loss_fn(val, labels).item()
 
@@ -108,6 +110,7 @@ for epoch in range(epoch_number):
 model.eval()
 test_loss, correct = 0, 0
 for images, labels in test_dataLoader:
+    images, labels = images.to(device), labels.to(device)
     with torch.no_grad():
         test = model(images)
         test_loss += loss_fn(test, labels).item()
